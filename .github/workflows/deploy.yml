@@ -1,0 +1,75 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# Architecture Portfolio: Automated CI/CD Pipeline for ASP.NET Core
+
+name: Build and deploy ASP.Net Core app to Azure Web App
+
+on:
+  push:
+    branches:
+      - main # (Atau sesuaikan dengan nama branch Anda, misal: merge-fix-vava)
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: read 
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.x'
+
+      - name: Build with dotnet
+        run: dotnet build sinta-asp.csproj --configuration Release
+
+      - name: dotnet publish
+        # Output publish dialihkan ke github.workspace agar tidak bentrok dengan sistem runner
+        run: dotnet publish sinta-asp.csproj -c Release -o "${{ github.workspace }}\myapp"
+
+      - name: Create deploy package (zip)
+        # Menggunakan PowerShell untuk membungkus artefak agar terhindar dari Error 500 OneDeploy
+        run: |
+          powershell -Command "Compress-Archive -Path '${{ github.workspace }}\myapp\*' -DestinationPath '${{ github.workspace }}\myapp.zip' -Force"
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-app
+          path: ${{ github.workspace }}/myapp.zip
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    permissions:
+      id-token: write 
+      contents: read 
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: dotnet-app
+          path: ./artifact
+          
+      - name: Debug - List contents
+        run: dir ./artifact
+        
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          # SENSITIVE DATA REDACTED FOR PORTFOLIO PURPOSES
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'SINTA'
+          slot-name: 'Production'
+          package: ./artifact/myapp.zip
