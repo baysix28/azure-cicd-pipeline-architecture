@@ -15,16 +15,16 @@ Proyek ini merupakan studi kasus dari penyelesaian masalah infrastruktur di ting
 ```mermaid
 graph LR
     subgraph GitHub ["GitHub & Actions (CI)"]
-        A((👨‍💻 Developer)) -->|Git Push| B[⚙️ Setup .NET & Build]
-        B -->|dotnet publish| C[📦 PowerShell: Zip Artifact]
+        A(( Developer)) -->|Git Push| B[ Setup .NET & Build]
+        B -->|dotnet publish| C[ PowerShell: Zip Artifact]
     end
 
     subgraph Authentication ["Security Layer"]
-        C -->|Request Access| D{🔒 OIDC / Federated Auth}
+        C -->|Request Access| D{ OIDC / Federated Auth}
     end
 
     subgraph Azure ["Microsoft Azure (CD)"]
-        D -->|Token Granted| E[☁️ Azure App Service]
+        D -->|Token Granted| E[ Azure App Service]
     end
 ```
 
