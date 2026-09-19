@@ -12,6 +12,22 @@ Proyek ini merupakan studi kasus dari penyelesaian masalah infrastruktur di ting
 
 ## 🏗️ Architecture Overview
 
+```mermaid
+graph LR
+    subgraph GitHub ["GitHub & Actions (CI)"]
+        A((👨‍💻 Developer)) -->|Git Push| B[⚙️ Setup .NET & Build]
+        B -->|dotnet publish| C[📦 PowerShell: Zip Artifact]
+    end
+
+    subgraph Authentication ["Security Layer"]
+        C -->|Request Access| D{🔒 OIDC / Federated Auth}
+    end
+
+    subgraph Azure ["Microsoft Azure (CD)"]
+        D -->|Token Granted| E[☁️ Azure App Service]
+    end
+```
+
 *(Catatan untuk Tian: Buat bagan alir sederhana di draw.io, simpan sebagai gambar, lalu ganti tautan di bawah ini dengan gambar Anda)*
 ![CI/CD Architecture Diagram](https://via.placeholder.com/800x400?text=Insert+Your+Architecture+Diagram+Here)
 
