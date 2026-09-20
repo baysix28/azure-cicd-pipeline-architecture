@@ -28,7 +28,6 @@ graph LR
     end
 ```
 
-*(Catatan untuk Tian: Buat bagan alir sederhana di draw.io, simpan sebagai gambar, lalu ganti tautan di bawah ini dengan gambar Anda)*
 ![CI/CD Architecture Diagram](https://via.placeholder.com/800x400?text=Insert+Your+Architecture+Diagram+Here)
 
 **Tech Stack:**
